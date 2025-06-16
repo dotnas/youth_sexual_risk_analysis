@@ -1,0 +1,54 @@
+Title: Profiling Youth Sexual Risk in Nigeria: A Machine Learning Approach Using MICS6 Data on Digital and Mass Media Engagement
+
+Overview:
+This study used machine learning to uncover patterns in media access and sexual risk behaviors among Nigerian youth aged 15-24, using the nationally representative Multiple Indicator Cluster Survey (MICS6). A two-track analysis framework was adopted: Track 1 explored general media engagement, while Track 2 examined risk profiles among sexually active youth.
+
+Track 1: Youth Media Engagement Profiles
+Sample: 3,743 youth aged 15-24 with complete data on media variables.
+
+Methods:
+- Selected variables: media access (newspaper, radio, TV, internet, mobile phone), education, wealth, and reading ability.
+- Applied k-means clustering on standardized media variables.
+- Visualized clusters using PCA plots with ellipses and centroids.
+
+Findings: 
+  Three distinct youth clusters emerged:
+- Traditional Access: Older youth, modest media engagement, radio dominant.
+- Disconnected Younger Youth: Younger, limited media access, low digital exposure.
+- Digital Media Consumers: High internet, mobile, and TV usage; most affluent.
+
+Implications: These profiles reflect different pathways for media-based interventions.
+
+Track 2: Sexual Risk Profiling Among Active Youth
+Sample: 213 youth aged 15-24 who reported sexual activity in the past 12 months.
+
+Methods:
+- Variables: condom use, relationship with last partner, media usage, education, reading ability, wealth, sex.
+- Applied PAM clustering using Gower distance to account for mixed variable types.
+- Generated tidy summaries and PCA visualizations.
+
+Findings:
+Three risk profiles emerged:
+- Low-Risk, Low-Media: Older, lower digital access, lower non-spousal sex.
+- Cautious Digital Adopters: Moderate risk, some media use.
+- Digitally Active, High-Risk: High internet/mobile use, frequent non-spousal sex, low condom use.
+
+Cross-tab Insights:
+Males were more likely in high-risk clusters.
+Youth from richer quintiles clustered in digital/high-risk profiles.
+
+Track Integration: Comparing Media and Risk Clusters
+Youth labeled as "Digital Media Consumers" in Track 1 were more likely to appear in "Digitally Active, High-Risk" cluster of Track 2.
+
+Visualized side-by-side PCA plots for Track 1 and Track 2.
+
+This linkage offers compelling evidence for tailoring SRH (sexual and reproductive health) campaigns via digital platforms.
+
+Conclusion:
+This study demonstrates the utility of unsupervised machine learning for public health profiling. By clustering youth based on their media engagement and risk behaviors, we reveal subgroups that can inform targeted, age-appropriate health communication strategies. This work underscores how digital expansion intersects with sexual health vulnerabilities in youth populations.
+
+Next Steps:
+Expand geographic stratification.
+Regression modeling for predictors of cluster membership.
+Translate insights into programmatic recommendations for stakeholders.
+
