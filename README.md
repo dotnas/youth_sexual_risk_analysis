@@ -49,6 +49,7 @@ Media Clusters (Track 1): Youth segment into:
 - Traditional Access
 - Disconnected Younger Youth
 - Digital Media Consumers
+
 Sexual Risk Clusters (Track 2):
 - Low-Risk, Low-Media
 - Cautious Digital Adopters
@@ -65,7 +66,7 @@ Sexual Risk Clusters (Track 2):
 ## Figures and Tables
 - PCA plots with cluster separation
 - Ellipses and centroids to visualize density
-- Cross-tabulations by sex, wealth, education, urban/rural
+- Cross-tabulations by sex, wealth
 - Tables created using gt and kableExtra
 
 ## Data Source
