@@ -1724,20 +1724,28 @@ Machine Learning Approach Using Multiple Indicator Cluster Survey
 </div>
 
 
-<div id="study-background" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Study Background</h1>
-<pre><code>Introduction
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<pre><code>
+This report presents a machine learning analysis of youth sexual risk and media 
+engagement patterns in Nigeria using data from the Multiple Indicator Cluster Survey 
+(MICS6). Young people aged 15–24 were selected from the full MICS dataset 
+and analysed across two thematic tracks:
 
-This report presents a machine learning analysis of youth sexual risk and media engagement patterns in Nigeria using data from the Multiple Indicator Cluster Survey (MICS6). Young people aged 15–24 were selected from the full MICS dataset and analysed across two thematic tracks:
+Track 1: Patterns of access to digital and traditional media platforms 
+(e.g., radio, TV, internet, mobile phones).
 
-- Track 1: Patterns of access to digital and traditional media platforms (e.g., radio, TV, internet, mobile phones).
-- Track 2: Sexual risk behaviors, focusing on condom use and nature of last sexual partner (spousal vs. non-spousal).
+Track 2: Sexual risk behaviors, focusing on condom use and nature of last sexual partner 
+(spousal vs. non-spousal).
 
-We apply unsupervised learning models to identify naturally occurring clusters within each track:
-- K-Means clustering is used for Track 1 (Media Engagement),
-- Partitioning Around Medoids (PAM) with Gower Distance is used for Track 2 (Sexual Risk Profiling), to accommodate mixed data types.
+We apply unsupervised learning models to identify naturally occurring 
+clusters within each track:
+K-Means clustering is used for Track 1 (Media Engagement),
+Partitioning Around Medoids (PAM) with Gower Distance is used for Track 2 
+(Sexual Risk Profiling), to accommodate mixed data types.
 
-We explore how demographic characteristics such as sex and wealth intersect with these clusters — and whether digitally engaged youth are more at risk.</code></pre>
+We explore how demographic characteristics such as sex and wealth intersect with 
+these clusters — and whether digitally engaged youth are more at risk.</code></pre>
 </div>
 <div id="load-prepare-data" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Load &amp; Prepare
@@ -1747,28 +1755,28 @@ Data</h1>
 </ul>
 <pre class="r"><code>#   Phase 1: Project Setup &amp; Data Loading
 library(haven)            # mics is in spss (.sav) file, read raaw data 
-
 #   Phase 2: Data Cleaning, Wrangling, and Preparation
 library(tidyverse)        # data cleaning &amp; wrangling
 library(data.table)       # data dataframe object handling &amp; manipulation
 library(labelled)         # labels &amp; values
 library(Hmisc)            # Initial data view - values and label
 library(mice)             # to handle missing data, imputation
-
+library(dplyr)            # data prep
+library(tidyr)            # data prep
 #   Phase 3: Exploratory Data Analysis (EDA) / Descriptives
 library(modelsummary)     # descriptive tables
 library(kableExtra)       # custom tables
 library(sjPlot)           # model visualizations or descriptive plots
 library(ggplot2)          # plots, graphs
 library(patchwork)        # to combine multiple ggplot2
-library(gt)
+library(gt)               # tables spec
 #   Phase 4: Main Machine Learning Analysis &amp; Model Evaluation
 library(tidymodels)       # machine learning 
 library(caret)            # machine learning model training 
 library(yardstick)        # calculate performance metrics for machine learning models
-
 #   Phase 5: Reporting and Output Generation 
-library(flextable)        # custom tables with r markdown</code></pre>
+library(flextable)        # custom tables with r markdown
+library(knitr)</code></pre>
 <pre class="r"><code>dir.create(&quot;figures&quot;, showWarnings = FALSE)
 dir.create(&quot;tables&quot;, showWarnings = FALSE)
 dir.create(&quot;output&quot;, showWarnings = FALSE)</code></pre>
@@ -1786,8 +1794,7 @@ dir.create(&quot;output&quot;, showWarnings = FALSE)</code></pre>
 
 mics6_mn &lt;- read_sav(&quot;Data/mn.sav&quot;)
 mics6_wn &lt;- read_sav(&quot;Data/wm.sav&quot;)</code></pre>
-<pre class="r"><code>head(mics6_mn)
-view_df(mics6_mn)
+<pre class="r"><code>view_df(mics6_mn)
 glimpse(mics6_mn)
 label(mics6_mn)
 
@@ -1881,7 +1888,7 @@ Subset Dataset</h3>
       TRUE ~ NA_real_
     ),
     
-    # Standardize education_male and wealth_quintile to factors
+  
     education_male = factor(education_male,
                             levels = c(0, 1, 2, 3, 4, 9),
                             labels = c(&quot;None&quot;, &quot;Primary&quot;, &quot;Jnr Secondary&quot;, &quot;Snr Secondary&quot;, &quot;Higher&quot;, &quot;Missing&quot;)),
@@ -1890,7 +1897,6 @@ Subset Dataset</h3>
                              levels = 1:5,
                              labels = c(&quot;Poorest&quot;, &quot;Second&quot;, &quot;Middle&quot;, &quot;Fourth&quot;, &quot;Richest&quot;))
   )
-
 
 mn_clean &lt;- mn_clean %&gt;%
   filter(age_cat %in% 1:2) %&gt;%
@@ -2007,11 +2013,9 @@ Female Subset Dataset</h3>
 <li>Merge Cleaned Male and Female Datasets</li>
 </ul>
 <pre class="r"><code>combined_data &lt;- bind_rows(mn_clean, wn_clean)</code></pre>
-<pre class="r"><code>head(combined_data)
-view_df(combined_data)
+<pre class="r"><code>view_df(combined_data)
 glimpse(combined_data)
-label(combined_data)
-view(combined_data)</code></pre>
+label(combined_data)</code></pre>
 </div>
 </div>
 </div>
@@ -2144,7 +2148,6 @@ library(cluster)
 gower_dist &lt;- daisy(track2_clean %&gt;% select(-man_uid, -sex, -age), metric = &quot;gower&quot;)
 pam_fit &lt;- pam(gower_dist, k = 3)
 
-
 track2_data$risk_cluster &lt;- as.factor(pam_fit$clustering)
 
 track2_data &lt;- track2_data %&gt;%
@@ -2273,12 +2276,7 @@ Demographics</h1>
 <div id="track-1-media-cluster-by-sex-wealth" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Track 1 – Media
 Cluster by sex &amp; wealth</h2>
-<pre class="r"><code>#library(dplyr)
-#library(gt)
-#library(knitr)
-#library(kableExtra)
-
-track1_summary &lt;- youth_media_data %&gt;%
+<pre class="r"><code>track1_summary &lt;- youth_media_data %&gt;%
   group_by(media_cluster_label, sex, wealth_quintile) %&gt;%
   summarise(n = n(), .groups = &quot;drop&quot;) %&gt;%
   group_by(media_cluster_label) %&gt;%
@@ -2772,7 +2770,7 @@ track2_table &lt;- track2_summary %&gt;%
 
 track2_table %&gt;%
   kbl(caption = &quot;Demographic Distribution by Sexual Risk Cluster (Track 2)&quot;) %&gt;%
-  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;), full_width = FALSE)</code></pre>
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;), full_width = FALSE) </code></pre>
 <table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Demographic Distribution by Sexual Risk Cluster (Track 2)
@@ -2924,32 +2922,51 @@ NA
 </table>
 <pre><code>Discussion and Implications
 
-This analysis revealed three distinct media engagement clusters and three sexual risk profiles among Nigerian youth:
+This analysis revealed three distinct media engagement clusters and three 
+sexual risk profiles among Nigerian youth:
 
-- Digital Media Consumers tend to have higher access to internet and mobile phones, and show some overlap with higher-risk sexual behavior.
-- Disconnected Younger Youth show low digital engagement and tend to be less sexually active or lower-risk.
-- Cautious Digital Adopters and Low-Risk, Low-Media profiles suggest that access alone does not equate to risk.
+Digital Media Consumers tend to have higher access to internet and mobile phones, 
+and show some overlap with higher-risk sexual behavior.
 
-The integration of Track 1 and Track 2 clusters reveals important overlaps — but also highlights that digital engagement alone does not uniformly predict risk. Instead, demographic context (such as sex, wealth) remains crucial.
+Disconnected Younger Youth show low digital engagement and tend to be less sexually 
+active or lower-risk.
+
+Cautious Digital Adopters and Low-Risk, Low-Media profiles suggest that access 
+alone does not equate to risk.
+
+The integration of Track 1 and Track 2 clusters reveals important overlaps — but also 
+highlights that digital engagement alone does not uniformly predict risk. Instead, 
+demographic context (such as sex, wealth) remains crucial.
 
 Policy Relevance
 
-- Targeted Sexual Health Interventions: Programs may need to differentiate between digitally connected yet cautious youth versus those who are digitally active and high-risk.
-- Digital Literacy and Safe Behavior Campaigns:** Especially for those with high internet/mobile access.
-- Addressing Inequity: Disconnected youth may lack both sexual health information and general digital opportunities.
+Targeted Sexual Health Interventions: Programs may need to differentiate between 
+digitally connected yet cautious youth versus those who are digitally active 
+and high-risk.
+
+Digital Literacy and Safe Behavior Campaigns:** Especially for those with high 
+internet/mobile access.
+
+Addressing Inequity: Disconnected youth may lack both sexual health information 
+and general digital opportunities.
 
 Limitations
 
-- Survey weights were not applied; hence findings may not be nationally representative.
-- Unmeasured variables (e.g., peer influence, religious beliefs) may affect behaviors.
+Survey weights were not applied; hence findings may not be nationally representative.
+Unmeasured variables (e.g., peer influence, religious beliefs) may affect behaviors.
 
 Next Steps
 
 - Extend to rural vs. urban comparisons.
 - Include additional behavioral indicators if available.
 - Apply supervised machine learning for prediction (e.g., classification models).
-
 </code></pre>
+<hr />
+<div style="text-align: center; font-size: 0.9em; color: gray; margin-top: 2em;">
+<p>This report is hosted on GitHub Pages:<br />
+<a href="https://dotnas.github.io/youth_sexual_risk_analysis/" target="_blank">
+https://dotnas.github.io/youth_sexual_risk_analysis/ </a></p>
+</div>
 </div>
 </div>
 
