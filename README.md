@@ -43,9 +43,9 @@ This project explores media engagement patterns and sexual risk profiles among N
   - `haven`, `naniar`
   - `ggplot2`, `patchwork`
 
-## Key Findings
+## Key Findings Youth segment into: 
 
-Media Clusters (Track 1): Youth segment into:
+Media Clusters (Track 1): 
 - Traditional Access
 - Disconnected Younger Youth
 - Digital Media Consumers
